@@ -1,0 +1,29 @@
+2025-06-14T05:55:13.719Z [INFO]: Starting RBAC seeding...
+2025-06-14T05:55:13.739Z [INFO]: Cleared existing RBAC data
+2025-06-14T05:55:13.774Z [INFO]: Inserted 17 permissions
+2025-06-14T05:55:13.790Z [ERROR]: Error seeding RBAC data: null value in column "createdAt" of relation "roles" violates not-null constraint
+2025-06-14T05:57:50.951Z [INFO]: Starting RBAC seeding...
+2025-06-14T05:57:50.980Z [INFO]: Cleared existing RBAC data
+2025-06-14T05:57:51.017Z [INFO]: Inserted 17 permissions
+2025-06-14T05:57:51.029Z [ERROR]: Error seeding RBAC data: null value in column "createdAt" of relation "roles" violates not-null constraint
+2025-06-14T07:55:24.760Z [INFO]: Starting RBAC seeding...
+2025-06-14T07:55:24.789Z [INFO]: Cleared existing RBAC data
+2025-06-14T07:55:24.815Z [INFO]: Inserted 17 permissions
+2025-06-14T07:55:24.829Z [ERROR]: Error seeding RBAC data: null value in column "createdAt" of relation "roles" violates not-null constraint
+2025-06-14T08:00:26.858Z [INFO]: Starting RBAC seeding...
+2025-06-14T08:00:26.885Z [INFO]: Cleared existing RBAC data
+2025-06-14T08:00:26.913Z [INFO]: Inserted 17 permissions
+2025-06-14T08:00:26.923Z [ERROR]: Error seeding RBAC data: null value in column "createdAt" of relation "roles" violates not-null constraint
+2025-06-14T08:01:24.876Z [INFO]: Starting RBAC seeding...
+2025-06-14T08:01:24.900Z [INFO]: Cleared existing RBAC data
+2025-06-14T08:01:24.925Z [INFO]: Inserted 17 permissions
+2025-06-14T08:01:24.966Z [INFO]: Inserted role admin with 17 permissions
+2025-06-14T08:01:24.991Z [INFO]: Inserted role manager with 14 permissions
+2025-06-14T08:01:25.005Z [INFO]: Inserted role cashier with 7 permissions
+2025-06-14T08:01:25.020Z [INFO]: Inserted role waiter with 5 permissions
+2025-06-14T08:01:25.030Z [INFO]: Inserted role kitchen_staff with 3 permissions
+2025-06-14T08:01:25.040Z [INFO]: RBAC seeding completed successfully
+2025-06-15T12:02:12.293Z [INFO]: Starting outlet seeding process...
+2025-06-15T12:02:12.332Z [INFO]: Cleared existing outlet data
+2025-06-15T12:02:12.344Z [INFO]: Inserted 4 outltes
+2025-06-15T12:02:12.369Z [INFO]: Outlet seeding completed successfully!
