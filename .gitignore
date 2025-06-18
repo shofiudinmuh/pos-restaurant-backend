@@ -1,7 +1,9 @@
 /.phpunit.cache
 /node_modules
+/logs
 /public/build
 /public/hot
+/.public/uploads
 /public/storage
 /storage/*.key
 /storage/pail

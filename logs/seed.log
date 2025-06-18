@@ -27,3 +27,21 @@
 2025-06-15T12:02:12.332Z [INFO]: Cleared existing outlet data
 2025-06-15T12:02:12.344Z [INFO]: Inserted 4 outltes
 2025-06-15T12:02:12.369Z [INFO]: Outlet seeding completed successfully!
+2025-06-18T05:37:26.639Z [INFO]: Starting RBAC seeding...
+2025-06-18T05:37:26.668Z [INFO]: Cleared existing RBAC data
+2025-06-18T05:37:26.806Z [INFO]: Inserted 99 permissions
+2025-06-18T05:37:26.953Z [INFO]: Inserted role admin with 99 permissions
+2025-06-18T05:37:27.010Z [INFO]: Inserted role manager with 20 permissions
+2025-06-18T05:37:27.033Z [INFO]: Inserted role cashier with 17 permissions
+2025-06-18T05:37:27.038Z [INFO]: Inserted role waiter with 5 permissions
+2025-06-18T05:37:27.043Z [INFO]: Inserted role kitchen_staff with 3 permissions
+2025-06-18T05:37:27.051Z [INFO]: RBAC seeding completed successfully
+2025-06-18T05:42:41.657Z [INFO]: Starting RBAC seeding...
+2025-06-18T05:42:41.679Z [INFO]: Cleared existing RBAC data
+2025-06-18T05:42:41.845Z [INFO]: Inserted 99 permissions
+2025-06-18T05:42:41.983Z [INFO]: Inserted role admin with 99 permissions
+2025-06-18T05:42:42.007Z [INFO]: Inserted role manager with 20 permissions
+2025-06-18T05:42:42.026Z [INFO]: Inserted role cashier with 17 permissions
+2025-06-18T05:42:42.033Z [INFO]: Inserted role waiter with 5 permissions
+2025-06-18T05:42:42.042Z [INFO]: Inserted role kitchen_staff with 3 permissions
+2025-06-18T05:42:42.054Z [INFO]: RBAC seeding completed successfully
