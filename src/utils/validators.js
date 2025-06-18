@@ -54,3 +54,42 @@ exports.refreshTokenValidator = [
         .notEmpty()
         .withMessage('Refresh token is required'),
 ];
+
+exports.paginationValidator = [
+    query('page')
+        .optional()
+        .isInt({ min: 1 })
+        .withMessage('Page must be a positive integer')
+        .toInt(),
+    query('limit')
+        .optional()
+        .isInt({ min: 1, max: 100 })
+        .withMessage('Limit must be between 1 and 100')
+        .toInt(),
+    query('sort').optional().isIn(['asc', 'desc']).withMessage('Sort must be asc or desc'),
+    query('sortBy').optional().isString().withMessage('sortBy must be a string').trim(),
+];
+
+exports.idParamValidator = [param('id').isUUID().withMessage('Invalid ID format')];
+
+exports.outletValidator = [
+    body('name')
+        .isString()
+        .withMessage('Name must be a string')
+        .isLength({ min: 3, max: 100 })
+        .withMessage('Name must be 3-100 characters')
+        .notEmpty()
+        .withMessage('Name is required')
+        .trim(),
+    body('address')
+        .isString()
+        .withMessage('Address must be a string')
+        .notEmpty()
+        .withMessage('Address is required')
+        .trim(),
+    body('phone')
+        .optional()
+        .matches(/^\+?[1-9]\d{1,14}$/)
+        .withMessage('Invalid phone number format'),
+    body('logo_url').optional().isURL().withMessage('Logo URL must be a valid URL'),
+];

@@ -6,7 +6,7 @@ const outletSeeder = require('../seeders/outletSeeder');
     try {
         console.log('Starting RBAC seeding process...');
         // await seedRBAC();
-        await outletSeeder();
+        // await outletSeeder();
         console.log('RBAC seeding completed successfully!');
         process.exit(0);
     } catch (error) {
