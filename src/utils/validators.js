@@ -13,11 +13,34 @@ exports.registerValidator = [
             if (user) throw new Error('Username is already exists');
             return true;
         }),
+    body('email')
+        .isEmail()
+        .withMessage('Invalid email format')
+        .isLength({ max: 255 })
+        .withMessage('Email must be at most 255 characters')
+        .custom(async (value) => {
+            const user = await User.findOne({ where: { email: value } });
+            if (user) throw new Error('Email is already exists');
+            return true;
+        }),
     body('password')
         .isString()
         .withMessage('Password must be a string')
         .isLength({ min: 8 })
         .withMessage('Password must be at least 8 characters'),
+    body('google_id')
+        .optional()
+        .isString()
+        .withMessage('Google ID must be a string')
+        .isLength({ max: 255 })
+        .withMessage('Google ID must be at most 255 characters')
+        .custom(async (value) => {
+            if (value) {
+                const user = await User.findOne({ where: { google_id: value } });
+                if (user) throw new Error('Google ID is already exists');
+            }
+            return true;
+        }),
     body('role_id').isUUID().withMessage('Invalid role ID'),
     body('outlet_id')
         .isUUID()
