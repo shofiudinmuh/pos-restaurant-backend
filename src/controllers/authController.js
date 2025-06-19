@@ -7,7 +7,7 @@ const ApiResponse = require('../utils/responseHandler');
 
 exports.register = async (req, res, next) => {
     try {
-        const { username, password, role_id, outlet_id } = req.body;
+        const { username, email, password, role_id, outlet_id } = req.body;
 
         if (!username || !password || !role_id || !outlet_id) {
             return ApiResponse.validationError(res, 'All fields are required!');
@@ -17,6 +17,7 @@ exports.register = async (req, res, next) => {
         const user = await User.create({
             user_id: uuidv4(),
             username,
+            email,
             password_hash,
             role_id,
             outlet_id,

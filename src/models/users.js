@@ -1,3 +1,5 @@
+const e = require('express');
+
 module.exports = (sequelize, DataTypes) => {
     const User = sequelize.define(
         'User', // Model name (singular)
@@ -9,12 +11,22 @@ module.exports = (sequelize, DataTypes) => {
             },
             username: {
                 type: DataTypes.STRING(100),
-                allowNull: false, // Fix typo
+                allowNull: false,
+                unique: true,
+            },
+            email: {
+                type: DataTypes.STRING(255),
+                allowNull: false,
                 unique: true,
             },
             password_hash: {
                 type: DataTypes.STRING(255),
-                allowNull: false, // Fix typo
+                allowNull: true,
+            },
+            google_id: {
+                type: DataTypes.STRING(255),
+                allowNull: true, // Adjust based on your requirements
+                unique: true,
             },
             role_id: {
                 type: DataTypes.UUID,
