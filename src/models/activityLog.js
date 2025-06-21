@@ -34,7 +34,7 @@ module.exports = (sequelize, DataTypes) => {
         },
         {
             tableName: 'activity_log',
-            timestamp: true,
+            timestamp: false,
         }
     );
 

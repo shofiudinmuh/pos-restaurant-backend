@@ -1,5 +1,5 @@
 const { body, param, query } = require('express-validator');
-const { User } = require('../models');
+const { User, Outlet } = require('../models');
 
 exports.registerValidator = [
     body('username')
@@ -115,4 +115,63 @@ exports.outletValidator = [
         .matches(/^\+?[1-9]\d{1,14}$/)
         .withMessage('Invalid phone number format'),
     body('logo_url').optional().isURL().withMessage('Logo URL must be a valid URL'),
+];
+
+exports.menuCategoryValidator = [
+    body('outlet_id')
+        .isUUID()
+        .withMessage('Invalid outlet ID')
+        .custom(async (value) => {
+            const outlet = await Outlet.findByPk(value);
+            if (!outlet) throw new Error('Outlet not found');
+            return true;
+        }),
+    body('category_name')
+        .isString()
+        .withMessage('Category name must be a string')
+        .isLength({ min: 3, max: 50 })
+        .withMessage('Category name must be 3-50 characters')
+        .notEmpty()
+        .withMessage('Categori name is required')
+        .trim(),
+    body('description').isString().withMessage('Description must be a string').optional(),
+];
+
+exports.menuItemValidator = [
+    body('outlet_id')
+        .isUUID()
+        .withMessage('Invalid outlet ID')
+        .custom(async (value) => {
+            const outlet = await Outlet.findByPk(value);
+            if (!outlet) throw new Error('Outlet not found');
+            return true;
+        }),
+    body('category_id')
+        .isUUID()
+        .withMessage('Invalid category Id')
+        .custom(async (value) => {
+            const category = await MenuCategories.findByPk(value);
+            if (!category) throw new Error('Category not found');
+            return true;
+        }),
+    body('name')
+        .isString()
+        .withMessage('Name must be a string')
+        .isLength({ min: 3, max: 100 })
+        .withMessage('Name must be 3-100 characters')
+        .notEmpty()
+        .withMessage('Name is required')
+        .trim(),
+    body('description').isString().withMessage('Description must be a string').optional(),
+    body('price')
+        .isDecimal({ decimal_digits: '0,2' })
+        .withMessage('Price must be a valid decimal number with up to 2 decimal places')
+        .notEmpty()
+        .withMessage('Price is required'),
+    body('photo_url').optional().isURL().withMessage('Photo URL must be a valid URL'),
+    body('is_active')
+        .optional()
+        .isBoolean()
+        .withMessage('is_active must be a boolean value')
+        .default(true),
 ];

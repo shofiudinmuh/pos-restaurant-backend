@@ -48,9 +48,9 @@ module.exports = (sequelize, DataTypes) => {
     );
 
     Token.associate = (models) => {
-        Token.belongsTo(models.User, { foreginKey: 'user_id' });
+        // Token.belongsTo(models.User, { foreginKey: 'user_id' });
         Token.hasMany(models.Session, { foreignKey: 'session_id' });
-        Token.belongsTo(models.ApiLog, { foreignKey: 'session_id' });
+        // Token.belongsTo(models.ApiLog, { foreignKey: 'session_id' });
     };
 
     return Token;

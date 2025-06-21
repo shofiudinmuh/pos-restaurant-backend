@@ -12,6 +12,9 @@ const models = {
     RolePermission: require('./role-permissions')(sequelize, Sequelize.DataTypes),
     Session: require('./sessions')(sequelize, Sequelize.DataTypes),
     Token: require('./tokens')(sequelize, Sequelize.DataTypes),
+    Outlet: require('./outlets')(sequelize, Sequelize.DataTypes),
+    MenuCategories: require('./menuCategories')(sequelize, Sequelize.DataTypes),
+    MenuItem: require('./menuItems')(sequelize, Sequelize.DataTypes),
 };
 
 fs.readdirSync(__dirname)
