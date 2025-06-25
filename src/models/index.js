@@ -15,6 +15,10 @@ const models = {
     Outlet: require('./outlets')(sequelize, Sequelize.DataTypes),
     MenuCategories: require('./menuCategories')(sequelize, Sequelize.DataTypes),
     MenuItem: require('./menuItems')(sequelize, Sequelize.DataTypes),
+    Ingredient: require('./ingredients', (sequelize, Sequelize.DataTypes)),
+    MenuIngredient: require('./menu-ingredients', (sequelize, Sequelize.DataTypes)),
+    Inventory: require('./inventory', (sequelize, Sequelize.DataTypes)),
+    InventoryTransaction: require('./inventory-transactions', (sequelize, Sequelize.DataTypes)),
 };
 
 fs.readdirSync(__dirname)
