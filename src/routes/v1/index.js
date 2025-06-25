@@ -5,5 +5,8 @@ router.use('/auth', require('./authRoute'));
 router.use('/outlets', require('./outletRoute'));
 router.use('/menu-categories', require('./menuCategoryRoute'));
 router.use('/menu-items', require('./menuRoute'));
+router.use('/ingredients', require('./ingredientRoute'));
+router.use('/menu-ingredients', require('./menuIngredientRoute'));
+router.use('/inventories', require('./inventoryTransactionRoute'));
 
 module.exports = router;

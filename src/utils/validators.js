@@ -175,3 +175,63 @@ exports.menuItemValidator = [
         .withMessage('is_active must be a boolean value')
         .default(true),
 ];
+
+exports.ingredientValidator = [
+    body('name')
+        .isString()
+        .withMessage('Name must be a string')
+        .isLength({ min: 3, max: 100 })
+        .withMessage('Name must be 3 - 100 characters')
+        .notEmpty()
+        .withMessage('Name is required')
+        .trim(),
+    body('unit')
+        .isString()
+        .withMessage('Unit must be a string')
+        .notEmpty()
+        .withMessage('Unit is required'),
+    body('minimum_stock')
+        .isDecimal()
+        .withMessage('Minimum stock must be a number')
+        .notEmpty()
+        .withMessage('Minimum stock is required'),
+];
+
+exports.updateIngredientValidator = [
+    body('name')
+        .optional()
+        .isString()
+        .withMessage('Name must be a string')
+        .isLength({ min: 3, max: 100 })
+        .withMessage('Name must be 3 - 100 characters')
+        .trim(),
+    body('unit').optional().isString().withMessage('Unit must be a string'),
+    body('minimum_stock').optional().isDecimal().withMessage('Minimum stock must be a number'),
+];
+
+exports.menuIngredientValidator = [
+    body('menu_id').isUUID().notEmpty().withMessage('Menu item is required'),
+    body('ingredient_id').isUUID().notEmpty().withMessage('Ingredient is required'),
+    body('quantity')
+        .isDecimal()
+        .withMessage('Quantity must be number')
+        .notEmpty()
+        .withMessage('Quantity is required'),
+];
+
+exports.updateMenuIngredientValidator = [
+    body('menu_id').isUUID().optional(),
+    body('ingredient_id').optional().isUUID(),
+    body('quantity').optional().isDecimal().withMessage('Quantity must be number'),
+];
+
+exports.createInventoryTransactionValidator = [
+    body('ingredient_id').isUUID().notEmpty().withMessage('Ingredient is required'),
+    body('transaction_type').isString(20).notEmpty().withMessage('Transaction type is required'),
+    body('quantity')
+        .isDecimal()
+        .withMessage('Quantity must be numeric')
+        .notEmpty()
+        .withMessage('Quantity is required'),
+    body('reason').isString(255).withMessage('Reason must be a string'),
+];
