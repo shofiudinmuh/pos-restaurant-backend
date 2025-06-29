@@ -7,6 +7,7 @@ const {
     outletValidator,
     paginationValidator,
     idParamValidator,
+    updateOutletValidator,
 } = require('../../utils/validators');
 const { handleFileUpload } = require('../../middleware/fileUploadMiddleware');
 
@@ -40,7 +41,7 @@ router.put(
     authMiddleware.verifyToken,
     authMiddleware.checkPermission('manage_outlets'),
     handleFileUpload('logo'),
-    validate([...idParamValidator, ...outletValidator]),
+    validate([...idParamValidator, ...updateOutletValidator]),
     outletController.updateOutlet
 );
 

@@ -100,22 +100,30 @@ exports.updateOutlet = async (req, res, next) => {
             return ApiResponse.error(res, 'Outlet not found', 404);
         }
 
+        // prepared object fot update data
+        const updateData = {};
+
+        if (req.body.name !== undefined) updateData.name = req.body.name;
+        if (req.body.address !== undefined) updateData.address = req.body.address;
+        if (req.body.phone !== undefined) updateData.phone = req.body.phone;
+
         if (req.file) {
             //delete old logo if exists
-            await StorageService.deleteFile(outlet.logo_url);
+            if (outlet.logo_url) {
+                await StorageService.deleteFile(outlet.logo_url);
+            }
+
+            const logo_url = await StorageService.uploadFile(req.file, 'outlet_logos');
+            updateData.logo_url = logo_url;
         }
 
-        logo_url = await StorageService.uploadFile(req.file, 'outlet_logos');
+        // Only update if there is at least 1 field to update
+        if (Object.keys(updateData).length === 0) {
+            await transaction.rollback();
+            return ApiResponse.error(res, 'No field provided to update', 400);
+        }
 
-        await outlet.update(
-            {
-                name,
-                address,
-                phone,
-                logo_url,
-            },
-            { transaction }
-        );
+        await outlet.update(updateData, { transaction });
 
         await activityLogService.logActivity(
             req.user.user_id,

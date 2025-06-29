@@ -117,6 +117,22 @@ exports.outletValidator = [
     body('logo_url').optional().isURL().withMessage('Logo URL must be a valid URL'),
 ];
 
+exports.updateOutletValidator = [
+    body('name')
+        .optional()
+        .isString()
+        .withMessage('Name must be a string')
+        .isLength({ min: 3, max: 100 })
+        .withMessage('Name must be 3-100 characters')
+        .trim(),
+    body('address').optional().isString().withMessage('Address must be a string').trim(),
+    body('phone')
+        .optional()
+        .matches(/^\+?[1-9]\d{1,14}$/)
+        .withMessage('Invalid phone number format'),
+    body('logo_url').optional().isURL().withMessage('Logo URL must be a valid URL'),
+];
+
 exports.menuCategoryValidator = [
     body('outlet_id')
         .isUUID()
@@ -234,4 +250,122 @@ exports.createInventoryTransactionValidator = [
         .notEmpty()
         .withMessage('Quantity is required'),
     body('reason').isString(255).withMessage('Reason must be a string'),
+];
+
+exports.createTableCategoryValidator = [
+    body('category_name').isString().notEmpty().withMessage('Category name is required').trim(),
+    body('description').isString().optional(),
+];
+
+exports.updateTableCategory = [
+    body('category_name').optional().isString().trim(),
+    body('description').optional().isString(),
+];
+
+exports.createTableValidator = [
+    body('table_number')
+        .isNumeric()
+        .withMessage('Table number must be a numeric')
+        .notEmpty()
+        .withMessage('Table number is required'),
+    body('capacity')
+        .isNumeric()
+        .withMessage('Capacity must be a numeric')
+        .notEmpty()
+        .withMessage('Capacity is required'),
+    body('table_category_id').isUUID().notEmpty().withMessage('Table category is required'),
+    body('status').isString().notEmpty().withMessage('Table status is required'),
+];
+
+exports.updateTableValidator = [
+    body('table_number').optional().isNumeric().withMessage('Table number must be a numeric'),
+    body('capacity').optional().isNumeric().withMessage('Capacity must be a numeric'),
+    body('table_category_id').optional().isUUID(),
+    body('status').optional().isString(),
+];
+
+exports.createDiscountsValidator = [
+    body('name')
+        .isString()
+        .withMessage('Discount name must be a string')
+        .notEmpty()
+        .withMessage('Discount name is required'),
+    body('type').isString().notEmpty().withMessage('Discount type is required'),
+    body('value')
+        .isNumeric()
+        .withMessage('Discount value must be a numeric')
+        .notEmpty()
+        .withMessage('Discount value is required'),
+    body('is_member_only').isBoolean().notEmpty().withMessage('Customer target is required'),
+    body('start_date')
+        .isDate()
+        .withMessage('Start date must be a valid date')
+        .notEmpty()
+        .withMessage('Start date is required'),
+    body('end_date')
+        .isDate()
+        .withMessage('End date must be a valid date')
+        .notEmpty()
+        .withMessage('End date is required'),
+];
+
+exports.updateDiscountsValidator = [
+    body('name').isString().withMessage('Discount name must be a string').optional(),
+    body('type').isString().optional(),
+    body('value').isNumeric().withMessage('Discount value must be a numeric').optional(),
+    body('is_member_only').isBoolean().optional(),
+    body('start_date').isDate().withMessage('Start date must be a valid date').optional(),
+    body('end_date').isDate().withMessage('End date must be a valid date').optional(),
+];
+
+exports.createTaxesValidator = [
+    body('name')
+        .isString()
+        .withMessage('Tax name must be a string')
+        .notEmpty()
+        .withMessage('Tax name is required'),
+    body('rate')
+        .isNumeric()
+        .withMessage('Tax rate must be a number')
+        .notEmpty()
+        .withMessage('Tax rate is required'),
+    body('is_active').isBoolean().notEmpty().withMessage('Tax status is required'),
+];
+
+exports.updateTaxesValidator = [
+    body('name').optional().isString().withMessage('Tax name must be a string'),
+    body('rate').optional().isNumeric().withMessage('Tax rate must be a number'),
+    body('is_active').optional().isBoolean(),
+];
+
+exports.createLoyaltyRewardsValidator = [
+    body('name')
+        .isString()
+        .withMessage('Name must be a characters')
+        .notEmpty()
+        .withMessage('Name is required'),
+    body('description').isString().optional(),
+    body('point_required')
+        .isNumeric()
+        .withMessage('Point minimum must be a number')
+        .notEmpty()
+        .withMessage('Point minimum is required'),
+    body('reward_type').isString().notEmpty().withMessage('Reward type is required'),
+    body('value')
+        .isNumeric()
+        .withMessage('Value must be a number')
+        .notEmpty()
+        .withMessage('Value is required'),
+    body('menu_id').isUUID().notEmpty().withMessage('Menu is required'),
+    body('is_active').isBoolean().notEmpty().withMessage('Loyalty status is required'),
+];
+
+exports.updateLoyaltyRewardsValidator = [
+    body('name').isString().withMessage('Name must be a characters').optional(),
+    body('description').isString().optional(),
+    body('point_required').isNumeric().withMessage('Point minimum must be a number').optional(),
+    body('reward_type').isString().optional(),
+    body('value').isNumeric().withMessage('Value must be a number').optional(),
+    body('menu_id').isUUID().optional(),
+    body('is_active').isBoolean().optional(),
 ];
