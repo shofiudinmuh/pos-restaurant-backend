@@ -78,7 +78,7 @@ const checkPermission = (permission) => {
                 ],
             });
 
-            console.log('User permissions: ', JSON.stringify(hasPermission, null, 2));
+            // console.log('User permissions: ', JSON.stringify(hasPermission, null, 2));
 
             if (!hasPermission) {
                 return res.status(403).json({

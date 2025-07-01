@@ -26,6 +26,7 @@ const models = {
     Token: require('./tokens')(sequelize, Sequelize.DataTypes),
     User: require('./users')(sequelize, Sequelize.DataTypes),
     LoyaltyReward: require('./loyaltyRewards')(sequelize, Sequelize.DataTypes),
+    CustomerPoint: require('./customerPoints')(sequelize, Sequelize.DataTypes),
 };
 
 fs.readdirSync(__dirname)
