@@ -369,3 +369,45 @@ exports.updateLoyaltyRewardsValidator = [
     body('menu_id').isUUID().optional(),
     body('is_active').isBoolean().optional(),
 ];
+
+exports.createCustomerValidator = [
+    body('name')
+        .isString()
+        .withMessage('Name must be a characters')
+        .notEmpty()
+        .withMessage('Name is required'),
+    body('email')
+        .isEmail()
+        .withMessage('Email must be valid format')
+        .notEmpty()
+        .withMessage('Email is required'),
+    body('phone')
+        .isNumeric()
+        .withMessage('Phone must be number')
+        .notEmpty()
+        .withMessage('Phone number is required'),
+    body('address')
+        .isString()
+        .withMessage('Address must be characters')
+        .notEmpty()
+        .withMessage('Address is required'),
+    body('membership_status')
+        .isString()
+        .withMessage('Membership status must be a valid option')
+        .notEmpty()
+        .withMessage('Membership status is required'),
+    body('membership_start_date')
+        .isDate()
+        .withMessage('Membership start date must be a valid date')
+        .notEmpty()
+        .withMessage('Membership date is required'),
+];
+
+exports.updateCustomerValidator = [
+    body('name').isString().optional(),
+    body('email').isEmail().withMessage('Email must be valid format').optional(),
+    body('phone').isString().optional(),
+    body('address').isString().optional(),
+    body('membership_status').isString().optional(),
+    body('membership_start_date').isDate().optional(),
+];

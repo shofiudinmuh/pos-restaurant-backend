@@ -47,7 +47,8 @@ module.exports = (sequelize, DataTypes) => {
     );
 
     Customer.associate = (models) => {
-        Customer.belongsTo = (models.Order, { foreignKey: 'customer_id' });
+        Customer.belongsTo(models.Order, { foreignKey: 'customer_id' });
+        Customer.hasOne(models.CustomerPoint, { foreignKey: 'customer_id' });
     };
 
     return Customer;
