@@ -55,6 +55,26 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.DECIMAL(10, 2),
                 allowNull: false,
             },
+            paid_amount: {
+                type: DataTypes.DECIMAL(10, 2),
+                defaultValue: 0,
+            },
+            change_amount: {
+                type: DataTypes.DECIMAL(10, 2),
+                defaultValue: 0,
+            },
+            order_type: {
+                type: DataTypes.STRING(20),
+                defaultValue: 'dine in',
+            },
+            created_at: {
+                type: DataTypes.DATE,
+                defaultValue: DataTypes.NOW(),
+            },
+            updated_at: {
+                type: DataTypes.DATE,
+                defaultValue: DataTypes.NOW(),
+            },
         },
         {
             tableName: 'orders',
@@ -67,6 +87,13 @@ module.exports = (sequelize, DataTypes) => {
         Order.belongsTo(models.Tables, { foreignKey: 'table_id' });
         Order.belongsTo(models.Customer, { foreignKey: 'customer_id' });
         Order.belongsTo(models.Discount, { foreignKey: 'discount_id' });
+        Order.hasMany(models.OrderItem, {
+            foreignKey: 'order_id',
+            onDelete: 'cascade',
+            onUpdate: 'cascade',
+        });
+        Order.hasOne(models.Payment, { foreignKey: 'order_id' });
+        Order.hasOne(models.Refund, { foreignKey: 'order_id' });
     };
 
     return Order;

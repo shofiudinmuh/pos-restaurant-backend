@@ -60,7 +60,7 @@ exports.login = async (req, res, next) => {
         const accessToken = jwt.sign(
             { user_id: user.user_id, role_id: user.role_id, outlet_id: user.outlet_id },
             process.env.JWT_SECRET,
-            { expiresIn: '15m' }
+            { expiresIn: 480 * 60 }
         );
 
         const refreshToken = jwt.sign({ user_id: user.user_id }, process.env.JWT_REFRESH_SECRET, {
@@ -107,7 +107,12 @@ exports.refreshToken = async (req, res, next) => {
 
         const decode = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET);
         const tokenRecord = await Token.findOne({
-            where: { token: refreshToken, type: 'refresh', revoked: false },
+            where: {
+                token: refreshToken,
+                type: 'refresh',
+                revoked: false,
+                expires_at: { [Op.gt]: new Date() },
+            },
         });
 
         if (!tokenRecord) {
@@ -122,7 +127,7 @@ exports.refreshToken = async (req, res, next) => {
         const newAccessToken = jwt.sign(
             { user_id: user.user_id, role_id: user.role_id, outlet_id: user.outlet_id },
             process.env.JWT_SECRET,
-            { expiresIn: '15m' }
+            { expiresIn: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) }
         );
 
         await activityLogService.logActivity(

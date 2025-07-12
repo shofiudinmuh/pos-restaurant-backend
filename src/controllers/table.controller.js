@@ -46,7 +46,7 @@ exports.getTables = async (req, res, next) => {
         const tables = await Table.findAndCountAll({
             where: { outlet_id: outlet_id },
             include: ['TableCategory'],
-            attributes: ['table_number', 'capacity', 'table_category_id', 'status'],
+            attributes: ['table_id', 'table_number', 'capacity', 'table_category_id', 'status'],
             order: [[sortBy, sort]],
             limit,
             offset,

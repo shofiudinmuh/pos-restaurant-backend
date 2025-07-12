@@ -69,7 +69,16 @@ module.exports = (sequelize, DataTypes) => {
             onDelete: 'SET NULL',
             onUpdate: 'CASCADE',
         });
-        MenuItem.hasMany(models.LoyaltyReward, { foreignKey: 'menu_id' });
+        MenuItem.hasMany(models.LoyaltyReward, {
+            foreignKey: 'menu_id',
+            onDelete: 'cascade',
+            onUpdate: 'cascade',
+        });
+        MenuItem.hasMany(models.OrderItem, {
+            foreignKey: 'menu_id',
+            onDelete: 'cascade',
+            onUpdate: 'cascade',
+        });
     };
 
     return MenuItem;

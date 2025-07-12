@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const authMiddleware = require('../../middleware/authMiddleware');
-const taxController = require('../../controllers/taxesController');
+const taxController = require('../../controllers/taxes.controller');
 const { validate } = require('../../middleware/validationMiddleware');
 const {
     paginationValidator,

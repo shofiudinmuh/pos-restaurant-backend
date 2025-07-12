@@ -411,3 +411,36 @@ exports.updateCustomerValidator = [
     body('membership_status').isString().optional(),
     body('membership_start_date').isDate().optional(),
 ];
+
+exports.createOrderValidator = [
+    body('table_id').isUUID().optional(),
+    body('customer_id').optional().isUUID(),
+    body('discount_id').optional().isUUID(),
+    body('order_type').optional().isString(),
+    body('items').isArray({ min: 1 }),
+    body('items.*.menu_id').isUUID(),
+    body('items.*.quantity').isInt({ min: 1 }),
+    body('items.*.notes').optional().isString().trim(),
+];
+
+exports.cancelOrderValidator = [
+    body('password').isString().notEmpty().withMessage('Password is required'),
+    body('notes').isString().notEmpty().withMessage('Notes is required to cancel order'),
+];
+
+exports.createPaymentValidator = [
+    body('amount').isFloat({ min: 0 }).notEmpty().withMessage('Amount must be positive value'),
+    body('payment_method')
+        .isIn(['cash', 'credit_cart', 'debit_card', 'ewallet'])
+        .withMessage('Invalid payment method'),
+    body('splits').isArray({ min: 1 }).optional(),
+    body('splits.*.amount').isFloat({ min: 0 }),
+    body('splits.*.payment_id').isUUID(),
+    body('redeem_reward_id').isUUID().optional(),
+    body('discounts_id').isUUID().optional(),
+];
+
+exports.createRefundValidator = [
+    body('payment_id').isUUID().notEmpty().withMessage('Payment ID is required'),
+    body('reason').isString().notEmpty().withMessage('Reason is required'),
+];

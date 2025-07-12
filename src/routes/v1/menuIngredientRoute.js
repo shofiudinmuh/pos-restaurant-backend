@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const authMiddleware = require('../../middleware/authMiddleware');
-const menuIngredientController = require('../../controllers/menuIngredientController');
+const menuIngredientController = require('../../controllers/menu-ingredient.controller');
 const { validate } = require('../../middleware/validationMiddleware');
 const {
     paginationValidator,
