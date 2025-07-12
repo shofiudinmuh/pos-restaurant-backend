@@ -1,4 +1,5 @@
-const { Customer, CustomerPoint } = require('../models');
+const { where } = require('sequelize');
+const { Customer, CustomerPoint, Outlet } = require('../models');
 const activityLogService = require('../services/activityLogService');
 const ApiResponse = require('../utils/responseHandler');
 const { v4: uuidv4 } = require('uuid');
@@ -8,6 +9,25 @@ exports.createCustomer = async (req, res, next) => {
     try {
         const { outlet_id } = req.user;
         const { name, email, phone, address, membership_status, membership_start_date } = req.body;
+
+        const outlet = await Outlet.findOne({
+            where: { outlet_id },
+            transaction,
+        });
+
+        if (!outletCode) {
+            await transaction.rollback();
+            return ApiResponse.error(res, 'Outlet not found', 404);
+        }
+        const outletCode = outlet.outlet_code.toUpperCase();
+
+        const currentTotalCustomer = await Customer.count({
+            where: { outlet_id },
+            transaction,
+        });
+
+        const sequenceNumber = (currentTotalCustomer + 1).toString().padStart(6, '0');
+        const membership_number = `${outletCode}${new Date().getFullYear()}-${sequenceNumber}`;
 
         const customer = await Customer.create(
             {
@@ -19,6 +39,7 @@ exports.createCustomer = async (req, res, next) => {
                 address,
                 membership_status,
                 membership_start_date,
+                membership_number,
             },
             {
                 transaction,
