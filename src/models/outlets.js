@@ -9,11 +9,11 @@ module.exports = (sequelize, DataTypes) => {
             },
             name: {
                 type: DataTypes.STRING(100),
-                allowedNull: false,
+                allowNull: false,
             },
             address: {
                 type: DataTypes.TEXT,
-                allowedNull: false,
+                allowNull: false,
             },
             phone: {
                 type: DataTypes.STRING(20),
@@ -21,7 +21,11 @@ module.exports = (sequelize, DataTypes) => {
             },
             logo_url: {
                 type: DataTypes.STRING(255),
-                allowedNull: false,
+                allowNull: false,
+            },
+            outlet_code: {
+                type: DataTypes.STRING(20),
+                allowNull: false,
             },
             created_at: {
                 type: DataTypes.DATE,

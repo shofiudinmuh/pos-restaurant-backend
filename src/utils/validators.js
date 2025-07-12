@@ -115,6 +115,7 @@ exports.outletValidator = [
         .matches(/^\+?[1-9]\d{1,14}$/)
         .withMessage('Invalid phone number format'),
     body('logo_url').optional().isURL().withMessage('Logo URL must be a valid URL'),
+    body('outlet_code').isString().notEmpty().withMessage('Outlet code is required'),
 ];
 
 exports.updateOutletValidator = [
