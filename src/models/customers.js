@@ -31,6 +31,11 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.DATE,
                 defaultValue: DataTypes.NOW,
             },
+            membership_number: {
+                type: DataTypes.STRING(20),
+                allowNull: false,
+                unique: true,
+            },
             created_at: {
                 type: DataTypes.DATE,
                 defaultValue: DataTypes.NOW,
