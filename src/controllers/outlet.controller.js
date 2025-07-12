@@ -21,6 +21,7 @@ exports.createOutlet = async (req, res, next) => {
                 address,
                 phone,
                 logo_url,
+                outlet_code,
             },
             { transaction }
         );
@@ -48,7 +49,7 @@ exports.getOutlets = async (req, res, next) => {
         const offset = (page - 1) * limit;
 
         const outlets = await Outlet.findAndCountAll({
-            attributes: ['outlet_id', 'name', 'address', 'phone', 'logo_url'],
+            attributes: ['outlet_id', 'name', 'address', 'phone', 'outlet_code', 'logo_url'],
             order: [[sortBy, sort]],
             limit,
             offset,
@@ -91,7 +92,7 @@ exports.updateOutlet = async (req, res, next) => {
     const transaction = await Outlet.sequelize.transaction();
     try {
         const { id } = req.params;
-        const { name, address, phone } = req.body;
+        const { name, address, phone, outlet_code } = req.body;
         let logo_url = req.body.logo_url;
 
         const outlet = await Outlet.findByPk(id);
@@ -103,9 +104,10 @@ exports.updateOutlet = async (req, res, next) => {
         // prepared object fot update data
         const updateData = {};
 
-        if (req.body.name !== undefined) updateData.name = req.body.name;
-        if (req.body.address !== undefined) updateData.address = req.body.address;
-        if (req.body.phone !== undefined) updateData.phone = req.body.phone;
+        if (name !== undefined) updateData.name = req.body.name;
+        if (address !== undefined) updateData.address = req.body.address;
+        if (phone !== undefined) updateData.phone = req.body.phone;
+        if (outlet_code !== undefined) updateData.outlet_code = req.body.outlet_code;
 
         if (req.file) {
             //delete old logo if exists
@@ -113,7 +115,7 @@ exports.updateOutlet = async (req, res, next) => {
                 await StorageService.deleteFile(outlet.logo_url);
             }
 
-            const logo_url = await StorageService.uploadFile(req.file, 'outlet_logos');
+            logo_url = await StorageService.uploadFile(req.file, 'outlet_logos');
             updateData.logo_url = logo_url;
         }
 
