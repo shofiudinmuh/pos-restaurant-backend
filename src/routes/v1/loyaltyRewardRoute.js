@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const authMiddleware = require('../../middleware/authMiddleware');
-const loyaltyController = require('../../controllers/loyaltyRewardController');
+const loyaltyController = require('../../controllers/loyalty-reward.controller');
 const { validate } = require('../../middleware/validationMiddleware');
 const {
     paginationValidator,

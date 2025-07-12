@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const authMiddleware = require('../../middleware/authMiddleware');
-const inventoryTransactionController = require('../../controllers/inventoryTransaction');
+const inventoryTransactionController = require('../../controllers/inventory-transaction.controller');
 const { validate } = require('../../middleware/validationMiddleware');
 const {
     paginationValidator,

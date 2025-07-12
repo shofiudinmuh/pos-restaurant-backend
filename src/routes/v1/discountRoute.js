@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const authMiddleware = require('../../middleware/authMiddleware');
-const discountController = require('../../controllers/discountController');
+const discountController = require('../../controllers/discount.controller');
 const { validate } = require('../../middleware/validationMiddleware');
 const {
     paginationValidator,
