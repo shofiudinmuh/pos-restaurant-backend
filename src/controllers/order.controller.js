@@ -1,4 +1,4 @@
-const { Sequelize, Op, where } = require('sequelize');
+const { Sequelize, Op } = require('sequelize');
 const bcrypt = require('bcrypt');
 const { v4: uuidv4 } = require('uuid');
 const {
@@ -43,6 +43,33 @@ exports.createOrder = async (req, res, next) => {
             menuMap[item.menu_id] = menu;
         }
 
+        // prepare data for create reference number
+        const currentTotalOrder = await Order.count({
+            where: {
+                outlet_id,
+                created_at: {
+                    [Op.between]: [
+                        new Date(new Date().setHours(0, 0, 0, 0)), //start of day
+                        new Date(new Date().setHours(23, 59, 59, 999)), //end of day
+                    ],
+                },
+            },
+            transaction,
+        });
+        const sequenceNumber = (currentTotalOrder + 1).toString().padStart(4, '0');
+        const outlet = await Outlet.findOne({
+            where: { outlet_id },
+            transaction,
+        });
+
+        // get date format
+        const date = new Date();
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        const outletCode = outlet.outlet_code;
+        const reference_number = `ODR-${outletCode}${year}${month}${day}-${sequenceNumber}`;
+
         // store order
         const order = await Order.create(
             {
@@ -56,6 +83,7 @@ exports.createOrder = async (req, res, next) => {
                 discount_amount: 0,
                 total_amount: 0,
                 order_type,
+                reference_number,
             },
             { transaction }
         );
@@ -158,14 +186,14 @@ exports.cancelOrder = async (req, res, next) => {
         }
 
         const user = await User.findOne({
-            where: { username: req.user.username, password: password },
+            where: { username: req.user.username },
         });
 
         if (!user) {
             return ApiResponse.error(res, 'Unauthorized user', 400);
         }
 
-        const isPasswordValid = await bcrypt.compare(password, user.password);
+        const isPasswordValid = await bcrypt.compare(password, user.password_hash);
 
         if (!isPasswordValid) {
             return ApiResponse.error(res, 'Invalid credentials', 401);
@@ -233,7 +261,8 @@ exports.getOrders = async (req, res, next) => {
     try {
         const { outlet_id } = req.user;
         const {
-            order_id,
+            search,
+            reference_number,
             status,
             customer_id,
             table_id,
@@ -246,7 +275,19 @@ exports.getOrders = async (req, res, next) => {
         } = req.query;
         const offset = (page - 1) * limit;
         const where = { outlet_id };
-        if (order_id) where.order_id = order_id;
+
+        // multi search
+        if (search) {
+            where[Op.or] = [
+                { reference_number: { [Op.iLike]: `%${search}%` } },
+                Sequelize.where(Sequelize.cast(Sequelize.col('Order.total_amount'), 'TEXT'), {
+                    [Op.iLike]: `%${search}%`,
+                }),
+                { status: { [Op.iLike]: `%${search}%` } },
+            ];
+        }
+
+        if (reference_number) where.reference_number = reference_number;
         if (status) where.status = status;
         if (customer_id) where.customer_id = customer_id;
         if (table_id) where.table_id = table_id;
@@ -307,6 +348,14 @@ exports.getOrders = async (req, res, next) => {
                     page: parseInt(page),
                     limit: parseInt(limit),
                     totalPage: Math.ceil(orders.count / limit),
+                },
+                filters: {
+                    applied: Object.keys(req.query)
+                        .filter((key) => !['page', 'limit', 'sort', 'sortBy'].includes(key))
+                        .map((key) => ({
+                            key,
+                            value: req.query[key],
+                        })),
                 },
             },
             'Orders retrieved successfully'

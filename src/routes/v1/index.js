@@ -14,6 +14,7 @@ router.use('/table-categories', require('./tableCategoryRoute'));
 router.use('/tables', require('./tableRoute'));
 router.use('/taxes', require('./taxesRoute'));
 router.use('/discounts', require('./discountRoute'));
-router.use('/orders', require('./orderRoute'));
+router.use('/orders', require('./order.route'));
+router.use('/payments', require('./payment.route'));
 
 module.exports = router;

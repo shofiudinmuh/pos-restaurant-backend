@@ -25,7 +25,7 @@ module.exports = (sequelize, DataTypes) => {
             },
             outlet_code: {
                 type: DataTypes.STRING(20),
-                allowNull: false,
+                allowNull: true,
             },
             created_at: {
                 type: DataTypes.DATE,
@@ -33,6 +33,7 @@ module.exports = (sequelize, DataTypes) => {
             },
             updated_at: {
                 type: DataTypes.DATE,
+                defaultValue: DataTypes.NOW,
             },
         },
         {

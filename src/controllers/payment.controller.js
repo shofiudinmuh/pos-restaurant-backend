@@ -1,4 +1,5 @@
 const { Sequelize, Op } = require('sequelize');
+const bcrypt = require('bcrypt');
 const { v4: uuidv4 } = require('uuid');
 const {
     Payment,
@@ -161,6 +162,27 @@ exports.payOrder = async (req, res, next) => {
             return ApiResponse.error(res, 'Insufficient payment amount', 400);
         }
 
+        const date = new Date();
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        const hour = String(date.getHours()).padStart(2, '0');
+        const minutes = String(date.getMinutes()).padStart(2, '0');
+        const formattedDate = `${year}${month}${day}${hour}${minutes}`;
+
+        const currentTotalPayment = await Payment.count({
+            where: {
+                outlet_id,
+                created_at: {
+                    [Op.between]: [
+                        new Date(new Date().setHours(0, 0, 0, 0)),
+                        new Date(new Date().setHours(23, 59, 59, 999)),
+                    ],
+                },
+            },
+            transaction,
+        });
+        const sequenceNumber = (currentTotalPayment + 1).toString().padStart(6, '0');
         // create payment
         const payment = await Payment.create(
             {
@@ -170,9 +192,7 @@ exports.payOrder = async (req, res, next) => {
                 amount,
                 payment_method,
                 payment_status: 'completed',
-                reference_number: `PAY-${payment_method.toUpperCase()}-${Date.now()}-${Math.floor(
-                    Math.random() * 1000
-                )}`,
+                reference_number: `PAY-${payment_method.toUpperCase()}-${formattedDate}-${sequenceNumber}`,
                 payment_date: new Date(),
                 user_id: req.user.user_id,
             },
@@ -190,7 +210,9 @@ exports.payOrder = async (req, res, next) => {
                         user_id: req.user.user_id,
                         payment_id: payment.payment_id,
                         status: 'completed',
-                        reference_number: `SPLIT-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
+                        reference_number: `SPLIT-${formattedDate}-${Math.floor(
+                            Math.random() * 1000
+                        )}`,
                     },
                     { transaction }
                 );
@@ -204,7 +226,7 @@ exports.payOrder = async (req, res, next) => {
                     user_id: req.user.user_id,
                     payment_id: payment.payment_id,
                     status: 'completed',
-                    reference_number: `SPLIT-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
+                    reference_number: `SPLIT-${formattedDate}-${Math.floor(Math.random() * 1000)}`,
                 },
                 { transaction }
             );
@@ -251,24 +273,17 @@ exports.payOrder = async (req, res, next) => {
 exports.refundPayment = async (req, res, next) => {
     const transaction = await Refund.sequelize.transaction();
     try {
-        const { outlet_id } = req.user;
-        const { order_id } = req.params;
-        const { payment_id, reason } = req.body;
-        const { user_id } = req.user;
+        const { outlet_id, user_id } = req.user;
+        const { id } = req.params;
+        const { reason, password } = req.body;
 
-        // validate order & payment
-        const order = await Order.findOne({
-            where: { order_id, outlet_id },
-            include: [{ model: Payment }],
-            transaction,
-        });
-
-        if (!order) {
-            return ApiResponse.error(res, 'Order not found', 404);
+        if (!password) {
+            await transaction.rollback();
+            return ApiResponse.error(res, 'Password is required', 400);
         }
 
         const payment = await Payment.findOne({
-            where: { payment_id, order_id },
+            where: { payment_id: id, payment_status: 'completed' },
             transaction,
         });
 
@@ -276,16 +291,45 @@ exports.refundPayment = async (req, res, next) => {
             return ApiResponse.error(res, 'Payment not found for this order', 404);
         }
 
-        if (Number(amount) > Number(payment.amount)) {
-            return ApiResponse.error(res, 'Refund amount cannot exceed payment amount', 400);
+        const order_id = payment.order_id;
+        // validate order
+        const order = await Order.findOne({
+            where: { order_id },
+            transaction,
+        });
+
+        if (!order) {
+            await transaction.rollback();
+            return ApiResponse.error(res, 'Order not found', 404);
+        }
+
+        const user = await User.findOne({
+            where: { user_id },
+            transaction,
+        });
+
+        if (!user) {
+            await transaction.rollback();
+            return ApiResponse.error(res, 'Unauthorized user', 400);
+        }
+
+        if (!user.password_hash) {
+            await transaction.rollback();
+            return ApiResponse.error(res, 'User password not set', 500);
+        }
+        const isPasswordValid = await bcrypt.compare(password, user.password_hash);
+
+        if (!isPasswordValid) {
+            await transaction.rollback();
+            return ApiResponse.error(res, 'Invalid credentials', 401);
         }
 
         // create refund
         const refund = await Refund.create(
             {
                 refund_id: uuidv4(),
-                order_id,
-                payment_id,
+                order_id: payment.order_id,
+                payment_id: id,
                 amount: order.total_amount,
                 reason,
                 status: 'completed',
@@ -299,6 +343,7 @@ exports.refundPayment = async (req, res, next) => {
             {
                 paid_amount: 0,
                 change_amount: 0,
+                status: 'canceled',
             },
             { transaction }
         );
@@ -315,7 +360,7 @@ exports.refundPayment = async (req, res, next) => {
             'refunded_payment',
             'refunds',
             refund.refund_id,
-            `Refund processed for order ${order_id} with amount ${amount}`
+            `Refund processed for order ${order_id} with amount ${refund.amount}`
         );
 
         await transaction.commit();
@@ -326,10 +371,11 @@ exports.refundPayment = async (req, res, next) => {
     }
 };
 
-exports.getAllPayments = async (req, res, next) => {
+exports.getPayments = async (req, res, next) => {
     try {
         const { outlet_id } = req.user;
         const {
+            search,
             start_date,
             end_date,
             payment_status,
@@ -341,6 +387,61 @@ exports.getAllPayments = async (req, res, next) => {
         } = req.query;
         const offset = (page - 1) * limit;
         const where = { outlet_id };
+
+        // multi search
+        if (search) {
+            const dateFormat = [];
+            // date input validation
+            if (/^\d{4}$/.test(search)) {
+                // if input date yyyy
+                dateFormat.push(
+                    Sequelize.where(
+                        Sequelize.fn('to_char', Sequelize.col('Payment.payment_date'), 'YYYY'),
+                        search
+                    )
+                );
+            } else if (/^\d{4}-\d{2}$/.test(search)) {
+                //if date input yyyy-mm
+                dateFormat.push(
+                    Sequelize.where(
+                        Sequelize.fn('to_char', Sequelize.col('Payment.payment_date'), 'YYYY-MM'),
+                        search
+                    )
+                );
+            } else if (/^\d{4}-\d{2}-\d{2}$/.test(search)) {
+                // if date input yyyy-mm-dd
+                dateFormat.push(
+                    Sequelize.where(
+                        Sequelize.fn(
+                            'to_char',
+                            Sequelize.col('Payment.payment_date'),
+                            'YYYY-MM-DD'
+                        ),
+                        search
+                    )
+                );
+            } else if (/^\d{2}-\d{4}$/.test(search)) {
+                //if date input mm-yyyy
+                const [month, year] = search.split('-');
+                dateFormat.push(
+                    Sequelize.where(
+                        Sequelize.fn('to_char', Sequelize.col('Payment.payment_date'), 'YYYY-MM'),
+                        `${year}-${month}`
+                    )
+                );
+            }
+
+            where[Op.or] = [
+                { reference_number: { [Op.iLike]: `%${search}%` } },
+                { payment_status: { [Op.iLike]: `%${search}%` } },
+                { payment_method: { [Op.iLike]: `%${search}%` } },
+                Sequelize.where(Sequelize.cast(Sequelize.col('Payment.amount'), 'TEXT'), {
+                    [Op.iLike]: `%${search}%`,
+                }),
+                ...dateFormat,
+            ];
+        }
+
         if (payment_status) where.payment_status = payment_status;
         if (customer_id) where.customer_id = customer_id;
 
@@ -399,6 +500,11 @@ exports.getAllPayments = async (req, res, next) => {
                     page: parseInt(page),
                     limit: parseInt(limit),
                     totalPage: Math.ceil(payments.count / limit),
+                },
+                filters: {
+                    applied: Object.keys(req.query)
+                        .filter((key) => !['page', 'limit', 'sort', 'sortBy'].includes(key))
+                        .map((key) => ({ key, value: req.query[key] })),
                 },
             },
             'Payments retrieved successfully'

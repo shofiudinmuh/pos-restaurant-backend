@@ -69,7 +69,7 @@ module.exports = (sequelize, DataTypes) => {
         Payment.belongsTo(models.Order, { foreignKey: 'order_id' });
         Payment.belongsTo(models.User, { foreignKey: 'user_id' });
         Payment.hasMany(models.PaymentSplit, { foreignKey: 'payment_id' });
-        Payment.hasOne(models.Refund, { foreignKey: 'payament_id' });
+        Payment.hasOne(models.Refund, { foreignKey: 'payment_id' });
     };
 
     return Payment;

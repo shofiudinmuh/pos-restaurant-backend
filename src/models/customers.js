@@ -33,8 +33,7 @@ module.exports = (sequelize, DataTypes) => {
             },
             membership_number: {
                 type: DataTypes.STRING(20),
-                allowNull: false,
-                unique: true,
+                allowNull: true,
             },
             created_at: {
                 type: DataTypes.DATE,

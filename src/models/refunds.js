@@ -60,7 +60,7 @@ module.exports = (sequelize, DataTypes) => {
     Refund.associate = (models) => {
         Refund.belongsTo(models.Order, { foreignKey: 'order_id' });
         Refund.belongsTo(models.Payment, { foreignKey: 'payment_id' });
-        Refund.belongsTo(models.User, { foreignKey: 'user_id' });
+        Refund.belongsTo(models.User, { foreignKey: 'processed_by' });
     };
 
     return Refund;
