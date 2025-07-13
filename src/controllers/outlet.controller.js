@@ -7,7 +7,7 @@ const { v4: uuidv4 } = require('uuid');
 exports.createOutlet = async (req, res, next) => {
     const transaction = await Outlet.sequelize.transaction();
     try {
-        const { name, address, phone } = req.body;
+        const { name, address, phone, outlet_code } = req.body;
         let logo_url = null;
 
         if (req.file) {

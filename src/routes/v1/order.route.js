@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const orderController = require('../../controllers/order.controller');
+const paymentController = require('../../controllers/payment.controller');
 const authMiddleware = require('../../middleware/authMiddleware');
 const { validate } = require('../../middleware/validationMiddleware');
 const {
@@ -32,15 +33,7 @@ router.post(
     authMiddleware.verifyToken,
     authMiddleware.checkPermission('manage_payments'),
     validate(createPaymentValidator),
-    orderController.payOrder
-);
-
-router.post(
-    '/:id/refund',
-    authMiddleware.verifyToken,
-    authMiddleware.checkPermission('manage_payments'),
-    validate(createRefundValidator),
-    orderController.refundPayment
+    paymentController.payOrder
 );
 
 router.get(

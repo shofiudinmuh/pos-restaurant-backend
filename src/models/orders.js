@@ -67,6 +67,10 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.STRING(20),
                 defaultValue: 'dine in',
             },
+            reference_number: {
+                type: DataTypes.STRING(100),
+                allowNull: true,
+            },
             created_at: {
                 type: DataTypes.DATE,
                 defaultValue: DataTypes.NOW(),
