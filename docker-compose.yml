@@ -1,0 +1,63 @@
+services:
+    db:
+        image: postgres:17
+        environment:
+            POSTGRES_USER: shofiudinmuh
+            POSTGRES_PASSWORD: Shfdienmuh08!
+            POSTGRES_DB: pos_restaurant
+        volumes:
+            - postgres_data:/var/lib/postgresql/data
+        ports:
+            - '5432:5432'
+        networks:
+            - pos-network
+    pgadmin:
+        image: dpage/pgadmin4
+        environment:
+            PGADMIN_DEFAULT_EMAIL: admin@admin.com
+            PGADMIN_DEFAULT_PASSWORD: admin
+        ports:
+            - '5050:80'
+        depends_on:
+            - db
+        networks:
+            - pos-network
+    backend:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        ports:
+            - '5000:5000'
+        depends_on:
+            - db
+        environment:
+            - NODE_ENV=development
+            - DATABASE_URL=postgres://shofiudinmuh:Shfdienmuh08!@db:5432/pos_restaurant
+            - JWT_SECRET=2c0d5aa1e178aa0306fbacb8b27c0f48ff0060fc4a9361b29dc90b4500b2dfa9dc61a28ec17ebbdeb5f123f1feaca83cf7f9fde6ca86fcbed1c482c7edd213d98d42ea50a275e64867018197c06778c03137583d4e771651455789abd2e4cfa2e5acc2c3742c3d7005f965b4d80578ad8e119e2e796aeeaad3c608c902cb5a33a3ee44255cbf00fdc2fd6e33c114e323d3542e1874d395a53fdb1636e50a9c28e0ab2259458c66eefa802ab67d6fc686dc5b0259a38ac34d14b2b11363998ea47936386c0893dd7b0c0b03ba2e49adfed092f2fcbd2e526eec35b04f36371b70a0ac787f4463eba4e3f3721a2f4f556f46fa82a2e6a54886d215760ef5254cbe67c5819b2fae45548b91681b0d7bcd2df53c3904d9e3d0276f01b1c75c4e9cf819f979fa368f88e899422c39297e46f4cf4ab6b8c2fcc0593af5936334dc1e1a103c2d0e360cb58a7f88c5973ff7b67d96860a0bc41d70425ac03f28c558fca15b207d3e690506cf1d9428cada60856969daf71dceeeccfbc53eff4f963520d5f3c0b1d2c4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0
+            - PORT=5000
+        volumes:
+            - ./:/app
+            - /app/node_modules
+        networks:
+            - pos-network
+    # frontend:
+    #     build:
+    #         context: ../pos-restaurant-frontend
+    #         dockerfile: Dockerfile
+    #     ports:
+    #         - '3001:3001'
+    #     environment:
+    #         - NODE_ENV=development
+    #         - REACT_APP_API_URL=http://backend:5000/api
+    #     volumes:
+    #         - ../pos-restaurant-frontend:/app
+    #         - /app/node_modules
+    #     depends_on:
+    #         - backend
+    #     networks:
+    #         - pos-network
+volumes:
+    postgres_data:
+networks:
+    pos-network:
+        driver: bridge
