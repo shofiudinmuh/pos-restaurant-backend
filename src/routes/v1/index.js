@@ -16,5 +16,7 @@ router.use('/taxes', require('./taxesRoute'));
 router.use('/discounts', require('./discountRoute'));
 router.use('/orders', require('./order.route'));
 router.use('/payments', require('./payment.route'));
+// report
+router.use('/report/transactions', require('./report.route'));
 
 module.exports = router;
