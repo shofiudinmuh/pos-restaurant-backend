@@ -1,20 +1,16 @@
 const express = require('express');
 const router = express.Router();
 const authMiddleware = require('../../middleware/authMiddleware');
-const taxController = require('../../controllers/taxes.controller');
+const TaxController = require('../../controllers/taxes.controller');
 const { validate } = require('../../middleware/validationMiddleware');
-const {
-    paginationValidator,
-    idParamValidator,
-    createTaxesValidator,
-    updateTaxesValidator,
-} = require('../../utils/validators');
+const { TaxValidator, PaginationValidator } = require('../../utils/validator');
+const taxController = new TaxController();
 
 router.post(
     '/',
     authMiddleware.verifyToken,
     authMiddleware.checkPermission('manage_taxes'),
-    validate(createTaxesValidator),
+    validate(TaxValidator.create()),
     taxController.createTax
 );
 
@@ -22,7 +18,7 @@ router.get(
     '/',
     authMiddleware.verifyToken,
     authMiddleware.checkPermission('view_taxes'),
-    validate(paginationValidator),
+    validate(PaginationValidator.pagination()),
     taxController.getTaxes
 );
 
@@ -30,7 +26,7 @@ router.put(
     '/:id',
     authMiddleware.verifyToken,
     authMiddleware.checkPermission('manage_taxes'),
-    validate([...idParamValidator, ...updateTaxesValidator]),
+    validate([...TaxValidator.idParam(), ...TaxValidator.update()]),
     taxController.updateTax
 );
 
@@ -38,7 +34,7 @@ router.delete(
     '/:id',
     authMiddleware.verifyToken,
     authMiddleware.checkPermission('manage_taxes'),
-    validate(idParamValidator),
+    validate(TaxValidator.idParam()),
     taxController.deleteTax
 );
 

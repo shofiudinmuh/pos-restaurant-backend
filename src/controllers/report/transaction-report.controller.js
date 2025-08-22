@@ -1,12 +1,12 @@
 const PDFReportGenerator = require('../../utils/pdfTransactionGenerator');
-const ReportService = require('../../services/transaction-report.services');
+const TransactionReportService = require('../../services/transaction-report.services');
 const ApiResponse = require('../../utils/responseHandler');
 const ActivityLogService = require('../../services/activityLogService');
 const { validationResult } = require('express-validator');
 
 // inititialize services
 const pdfGenerator = new PDFReportGenerator();
-const reportService = new ReportService();
+const reportService = new TransactionReportService();
 const activityLogService = new ActivityLogService();
 
 class ReportController {

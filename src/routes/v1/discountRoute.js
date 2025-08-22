@@ -1,20 +1,16 @@
 const express = require('express');
 const router = express.Router();
 const authMiddleware = require('../../middleware/authMiddleware');
-const discountController = require('../../controllers/discount.controller');
+const DiscountController = require('../../controllers/discount.controller');
 const { validate } = require('../../middleware/validationMiddleware');
-const {
-    paginationValidator,
-    idParamValidator,
-    updateDiscountsValidator,
-    createDiscountsValidator,
-} = require('../../utils/validators');
+const { DiscountValidator, PaginationValidator } = require('../../utils/validator');
+const discountController = new DiscountController();
 
 router.post(
     '/',
     authMiddleware.verifyToken,
     authMiddleware.checkPermission('manage_discounts'),
-    validate(createDiscountsValidator),
+    validate(DiscountValidator.create()),
     discountController.createDiscount
 );
 
@@ -22,7 +18,7 @@ router.get(
     '/',
     authMiddleware.verifyToken,
     authMiddleware.checkPermission('view_discounts'),
-    validate(paginationValidator),
+    validate(PaginationValidator.pagination()),
     discountController.getDiscounts
 );
 
@@ -30,7 +26,7 @@ router.put(
     '/:id',
     authMiddleware.verifyToken,
     authMiddleware.checkPermission('manage_discounts'),
-    validate([...idParamValidator, ...updateDiscountsValidator]),
+    validate([...DiscountValidator.idParam(), ...DiscountValidator.update()]),
     discountController.updateDiscount
 );
 
@@ -38,7 +34,7 @@ router.delete(
     '/:id',
     authMiddleware.verifyToken,
     authMiddleware.checkPermission('manage_discounts'),
-    validate(idParamValidator),
+    validate(DiscountValidator.idParam()),
     discountController.deleteDiscount
 );
 

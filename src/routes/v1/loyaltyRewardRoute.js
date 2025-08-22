@@ -1,20 +1,16 @@
 const express = require('express');
 const router = express.Router();
 const authMiddleware = require('../../middleware/authMiddleware');
-const loyaltyController = require('../../controllers/loyalty-reward.controller');
+const LoyaltyController = require('../../controllers/loyalty-reward.controller');
 const { validate } = require('../../middleware/validationMiddleware');
-const {
-    paginationValidator,
-    idParamValidator,
-    createLoyaltyRewardsValidator,
-    updateLoyaltyRewardsValidator,
-} = require('../../utils/validators');
+const { LoyaltyRewardValidator, PaginationValidator } = require('../../utils/validator');
+const loyaltyController = new LoyaltyController();
 
 router.post(
     '/',
     authMiddleware.verifyToken,
     authMiddleware.checkPermission('manage_loyalty_rewards'),
-    validate(createLoyaltyRewardsValidator),
+    validate(LoyaltyRewardValidator.create()),
     loyaltyController.createLoyaltyReward
 );
 
@@ -22,7 +18,7 @@ router.get(
     '/',
     authMiddleware.verifyToken,
     authMiddleware.checkPermission('view_loyalty_rewards'),
-    validate(paginationValidator),
+    validate(PaginationValidator.pagination()),
     loyaltyController.getLoyaltyRewards
 );
 
@@ -30,7 +26,7 @@ router.put(
     '/:id',
     authMiddleware.verifyToken,
     authMiddleware.checkPermission('manage_loyalty_rewards'),
-    validate([...idParamValidator, ...updateLoyaltyRewardsValidator]),
+    validate([...LoyaltyRewardValidator.idParam(), ...LoyaltyRewardValidator.update()]),
     loyaltyController.updateLoyaltyReward
 );
 
@@ -38,7 +34,7 @@ router.delete(
     '/:id',
     authMiddleware.verifyToken,
     authMiddleware.checkPermission('manage_loyalty_rewards'),
-    validate(idParamValidator),
+    validate(LoyaltyRewardValidator.idParam()),
     loyaltyController.deleteLoyaltyReward
 );
 

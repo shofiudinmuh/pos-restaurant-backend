@@ -1,20 +1,16 @@
 const express = require('express');
 const router = express.Router();
 const authMiddleware = require('../../middleware/authMiddleware');
-const tableController = require('../../controllers/table.controller');
+const TableController = require('../../controllers/table.controller');
 const { validate } = require('../../middleware/validationMiddleware');
-const {
-    createTableValidator,
-    paginationValidator,
-    idParamValidator,
-    updateTableValidator,
-} = require('../../utils/validators');
+const { TableValidator, PaginationValidator } = require('../../utils/validator');
+const tableController = new TableController();
 
 router.post(
     '/',
     authMiddleware.verifyToken,
     authMiddleware.checkPermission('manage_tables'),
-    validate(createTableValidator),
+    validate(TableValidator.create()),
     tableController.createTable
 );
 
@@ -22,7 +18,7 @@ router.get(
     '/',
     authMiddleware.verifyToken,
     authMiddleware.checkPermission('view_tables'),
-    validate(paginationValidator),
+    validate(PaginationValidator.pagination()),
     tableController.getTables
 );
 
@@ -30,15 +26,15 @@ router.put(
     '/:id',
     authMiddleware.verifyToken,
     authMiddleware.checkPermission('manage_tables'),
-    validate([...idParamValidator, ...updateTableValidator]),
-    tableController.updateTables
+    validate([...TableValidator.idParam(), ...TableValidator.update()]),
+    tableController.updateTable
 );
 
 router.delete(
     '/:id',
     authMiddleware.verifyToken,
     authMiddleware.checkPermission('manage_tables'),
-    validate(idParamValidator),
+    validate(TableValidator.idParam()),
     tableController.deleteTable
 );
 
