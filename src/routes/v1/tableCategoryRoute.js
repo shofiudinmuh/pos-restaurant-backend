@@ -1,20 +1,16 @@
 const express = require('express');
 const router = express.Router();
 const authMiddleware = require('../../middleware/authMiddleware');
-const tableCategoryController = require('../../controllers/table-category.controller');
+const TableCategoryController = require('../../controllers/table-category.controller');
 const { validate } = require('../../middleware/validationMiddleware');
-const {
-    createTableCategoryValidator,
-    paginationValidator,
-    idParamValidator,
-    updateTableCategory,
-} = require('../../utils/validators');
+const { TableCategoryValidator, PaginationValidator } = require('../../utils/validator');
+const tableCategoryController = new TableCategoryController();
 
 router.post(
     '/',
     authMiddleware.verifyToken,
     authMiddleware.checkPermission('manage_table_category'),
-    validate(createTableCategoryValidator),
+    validate(TableCategoryValidator.create()),
     tableCategoryController.createTableCategory
 );
 
@@ -22,7 +18,7 @@ router.get(
     '/',
     authMiddleware.verifyToken,
     authMiddleware.checkPermission('view_table_category'),
-    validate(paginationValidator),
+    validate(PaginationValidator.pagination()),
     tableCategoryController.getTableCategories
 );
 
@@ -30,7 +26,7 @@ router.put(
     '/:id',
     authMiddleware.verifyToken,
     authMiddleware.checkPermission('manage_table_category'),
-    validate([...idParamValidator, ...updateTableCategory]),
+    validate([...TableCategoryValidator.idParam(), ...TableCategoryValidator.update()]),
     tableCategoryController.updateTableCategory
 );
 
@@ -38,7 +34,7 @@ router.delete(
     '/:id',
     authMiddleware.verifyToken,
     authMiddleware.checkPermission('manage_table_category'),
-    validate(idParamValidator),
+    validate(TableCategoryValidator.idParam()),
     tableCategoryController.deleteTableCategory
 );
 

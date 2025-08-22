@@ -94,3 +94,5 @@ class TransactionReportService {
         };
     }
 }
+
+module.exports = TransactionReportService;
