@@ -1,38 +1,35 @@
 const express = require('express');
 const router = express.Router();
 const authMiddleware = require('../../middleware/authMiddleware');
-const menuController = require('../../controllers/menu-item.controller');
+const MenuController = require('../../controllers/menu-item.controller');
 const { validate } = require('../../middleware/validationMiddleware');
-const {
-    menuItemValidator,
-    paginationValidator,
-    idParamValidator,
-} = require('../../utils/validators');
 const { handleFileUpload } = require('../../middleware/fileUploadMiddleware');
+const { MenuItemValidator, PaginationValidator } = require('../../utils/validator');
 
+const menuItemController = new MenuController();
 router.post(
     '/',
     authMiddleware.verifyToken,
     authMiddleware.checkPermission('manage_menu_items'),
     handleFileUpload('photo'),
-    validate(menuItemValidator),
-    menuController.createMenuItem
+    validate(MenuItemValidator.create()),
+    menuItemController.createMenuItem
 );
 
 router.get(
     '/',
     authMiddleware.verifyToken,
     authMiddleware.checkPermission('view_menu_items'),
-    validate(paginationValidator),
-    menuController.getMenuItems
+    validate(PaginationValidator.pagination()),
+    menuItemController.getMenuItems
 );
 
 router.get(
     '/:id',
     authMiddleware.verifyToken,
     authMiddleware.checkPermission('view_menu_items'),
-    validate(idParamValidator),
-    menuController.getMenuItemById
+    validate(MenuItemValidator.idParam()),
+    menuItemController.getMenuItemById
 );
 
 router.put(
@@ -40,16 +37,16 @@ router.put(
     authMiddleware.verifyToken,
     authMiddleware.checkPermission('manage_menu_items'),
     handleFileUpload('photo'),
-    validate([...idParamValidator, ...menuItemValidator]),
-    menuController.updateMenuItem
+    validate([...MenuItemValidator.idParam(), ...MenuItemValidator.update()]),
+    menuItemController.updateMenuItem
 );
 
 router.delete(
     '/:id',
     authMiddleware.verifyToken,
     authMiddleware.checkPermission('manage_menu_items'),
-    validate(idParamValidator),
-    menuController.deleteMenuItem
+    validate(MenuItemValidator.idParam()),
+    menuItemController.deleteMenuItem
 );
 
 module.exports = router;

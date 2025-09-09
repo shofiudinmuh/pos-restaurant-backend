@@ -1,8 +1,10 @@
 const BaseValidator = require('./baseValidator');
-const OutletValidator = require('./outletValidator');
 const DiscountValidator = require('./discountValidator');
 const ExpenseValidator = require('./expenseValidator');
+const OutletValidator = require('./outletValidator');
 const LoyaltyRewardValidator = require('./loyaltyRewardValidator');
+const MenuCategoryValidator = require('./menuCategoryValidator');
+const MenuItemValidator = require('./menuItemValidator');
 const PaginationValidator = require('./paginationValidator');
 const ShiftValidator = require('./shiftValidator');
 const TableValidator = require('./tableValidator');
@@ -15,6 +17,8 @@ module.exports = {
     DiscountValidator,
     ExpenseValidator,
     LoyaltyRewardValidator,
+    MenuCategoryValidator,
+    MenuItemValidator,
     PaginationValidator,
     ShiftValidator,
     TableValidator,
