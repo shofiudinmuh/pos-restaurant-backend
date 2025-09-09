@@ -54,6 +54,27 @@ class BaseValidator {
     }
 
     /**
+     * Validate a email field
+     * @param {string} field
+     * @param {boolean} [required = true]
+     * @returns {Object}
+     */
+    static validateEmail(field, required = true) {
+        const validator = body(field).isEmail().withMessage(`${field} must be valid email`);
+        return validator.notEmpty().withMessage(`${field} is required`);
+    }
+
+    /**
+     * Validate optional email field
+     * @param {string} field
+     * @param {string} [message]
+     * @returns {Object}
+     */
+    static validateOptionalEmail(field, message = `${field} must be a valid email`) {
+        return body(field).optional().isEmail().withMessage(message);
+    }
+
+    /**
      * Validate a UUID field
      * @param {string} field -Field name
      * @param {boolean} [required = true] - Wheter the field is required

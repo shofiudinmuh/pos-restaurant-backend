@@ -1,20 +1,17 @@
 const express = require('express');
 const router = express.Router();
 const authMiddleware = require('../../middleware/authMiddleware');
-const customerController = require('../../controllers/customer.controller');
+const CustomerController = require('../../controllers/customer.controller');
 const { validate } = require('../../middleware/validationMiddleware');
-const {
-    createCustomerValidator,
-    paginationValidator,
-    idParamValidator,
-    updateCustomerValidator,
-} = require('../../utils/validators');
+const { CustomerValidator, PaginationValidator } = require('../../utils/validator');
+
+const customerController = new CustomerController();
 
 router.post(
     '/',
     authMiddleware.verifyToken,
     authMiddleware.checkPermission('manage_customers'),
-    validate(createCustomerValidator),
+    validate(CustomerValidator.create()),
     customerController.createCustomer
 );
 
@@ -22,7 +19,7 @@ router.get(
     '/',
     authMiddleware.verifyToken,
     authMiddleware.checkPermission('view_customers'),
-    validate(paginationValidator),
+    validate(PaginationValidator.pagination()),
     customerController.getCustomers
 );
 
@@ -30,7 +27,7 @@ router.get(
     '/:id',
     authMiddleware.verifyToken,
     authMiddleware.checkPermission('view_customers'),
-    validate(idParamValidator),
+    validate(CustomerValidator.idParam()),
     customerController.getCustomerById
 );
 
@@ -38,7 +35,7 @@ router.put(
     '/:id',
     authMiddleware.verifyToken,
     authMiddleware.checkPermission('manage_customers'),
-    validate([...idParamValidator, ...updateCustomerValidator]),
+    validate([...CustomerValidator.idParam(), ...CustomerValidator.update()]),
     customerController.updateCustomer
 );
 
@@ -46,7 +43,7 @@ router.delete(
     '/:id',
     authMiddleware.verifyToken,
     authMiddleware.checkPermission('manage_customers'),
-    validate(idParamValidator),
+    validate(CustomerValidator.idParam()),
     customerController.deleteCustomer
 );
 

@@ -1,4 +1,5 @@
 const BaseValidator = require('./baseValidator');
+const CustomerValidator = require('./customerValidator');
 const OutletValidator = require('./outletValidator');
 const DiscountValidator = require('./discountValidator');
 const ExpenseValidator = require('./expenseValidator');
@@ -11,6 +12,7 @@ const TaxValidator = require('./taxValidator');
 
 module.exports = {
     BaseValidator,
+    CustomerValidator,
     OutletValidator,
     DiscountValidator,
     ExpenseValidator,
