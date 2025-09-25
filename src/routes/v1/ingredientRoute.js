@@ -1,20 +1,16 @@
 const express = require('express');
 const router = express.Router();
 const authMiddleware = require('../../middleware/authMiddleware');
-const ingredientController = require('../../controllers/ingredient.controller');
+const IngredientController = require('../../controllers/ingredient.controller');
 const { validate } = require('../../middleware/validationMiddleware');
-const {
-    ingredientValidator,
-    paginationValidator,
-    idParamValidator,
-    updateIngredientValidator,
-} = require('../../utils/validators');
+const { IngredientValidator, PaginationValidator } = require('../../utils/validator');
 
+const ingredientController = new IngredientController();
 router.post(
     '/',
     authMiddleware.verifyToken,
     authMiddleware.checkPermission('manage_ingredients'),
-    validate(ingredientValidator),
+    validate(IngredientValidator.create()),
     ingredientController.createIngredient
 );
 
@@ -22,7 +18,7 @@ router.get(
     '/',
     authMiddleware.verifyToken,
     authMiddleware.checkPermission('view_ingredients'),
-    validate(paginationValidator),
+    validate(PaginationValidator.pagination()),
     ingredientController.getIngredients
 );
 
@@ -30,15 +26,15 @@ router.get(
     '/:id',
     authMiddleware.verifyToken,
     authMiddleware.checkPermission('view_ingredients'),
-    validate(idParamValidator),
-    ingredientController.getIngredientById
+    validate(IngredientValidator.idParam()),
+    ingredientController.getIngredient
 );
 
 router.put(
     '/:id',
     authMiddleware.verifyToken,
     authMiddleware.checkPermission('manage_ingredients'),
-    validate([...idParamValidator, ...updateIngredientValidator]),
+    validate([...IngredientValidator.idParam(), ...IngredientValidator.update()]),
     ingredientController.updateIngredient
 );
 
@@ -46,7 +42,7 @@ router.delete(
     '/:id',
     authMiddleware.verifyToken,
     authMiddleware.checkPermission('manage_ingredients'),
-    validate(idParamValidator),
+    validate(IngredientValidator.idParam()),
     ingredientController.deleteIngredient
 );
 

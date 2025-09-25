@@ -1,5 +1,6 @@
 const express = require('express');
 const cors = require('cors');
+const Container = require('./container');
 const helmet = require('helmet');
 const morgan = require('morgan');
 const rateLimit = require('express-rate-limit');
@@ -8,8 +9,10 @@ const routes = require('./routes/v1');
 const errorMiddleware = require('./middleware/errorMiddleware');
 const apiLogMiddleware = require('./middleware/apiLogMiddleware');
 const ApiResponse = require('./utils/responseHandler');
-
+const container = new Container();
 const app = express();
+
+container.initialize();
 
 const limiter = rateLimit({
     windowMs: 15 * 60 * 1000,
@@ -51,17 +54,6 @@ app.get('/health', (req, res) => {
 // error handling
 app.use(errorMiddleware);
 
-// database sync
-// sequelize
-//     .sync({ force: false })
-//     .then(() => {
-//         console.log('Database synced');
-//         const PORT = process.env.PORT || 5000;
-//         app.listen(PORT, () => console.log(`Server is runnung on port ${PORT}`));
-//     })
-//     .catch((err) => {
-//         console.log('Unable to sync database', err);
-//     });
 async function initializeDatabase() {
     try {
         // Drop the view first if it exists
@@ -106,3 +98,14 @@ async function initializeDatabase() {
 
 // Initialize database and start server
 initializeDatabase();
+// database sync
+// sequelize
+//     .sync({ force: false })
+//     .then(() => {
+//         console.log('Database synced');
+//         const PORT = process.env.PORT || 5000;
+//         app.listen(PORT, () => console.log(`Server is runnung on port ${PORT}`));
+//     })
+//     .catch((err) => {
+//         console.log('Unable to sync database', err);
+//     });
